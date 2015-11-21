@@ -7,8 +7,10 @@ suite(path.basename(__filename), function() {
 
     var urls = [
         {url:'http://www.test.com',isUrl:true},
+        {url:'https://www.test.com',isUrl:true},
+        {url:'http://www.test.com:8080',isUrl:true},
+        {url:'https://www.test.com:8080',isUrl:true},
         {url:'foo',isUrl:false},
-        {url:'http://',isUrl:false},
         {url:'http://',isUrl:false}
     ];
 
