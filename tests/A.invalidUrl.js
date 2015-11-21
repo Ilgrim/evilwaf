@@ -6,7 +6,6 @@ var evilwaf = require('../main');
 suite(path.basename(__filename), function() {
 
     //var option = require('../libs/options');
-    // test
     expect({bla:true}).to.be.deep.equal({bla:true});
 
 });
