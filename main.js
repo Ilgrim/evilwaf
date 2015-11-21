@@ -1,6 +1,7 @@
 var util = require('util');
 var events = require('events').EventEmitter;
 var options = require('./libs/options');
+var utils = require('./libs/utils.js');
 
 var dns = require('dns');
 var async = require('async');
@@ -19,7 +20,7 @@ util.inherits(evilwaf, events);
 
 evilwaf.prototype.run = function() {
 
-    if (!this.options.urlParsed.protocol.match(/http/i)) {
+    if (!utils.isURL(this.options.urlParsed)) {
         this.emit('error','passed arguments is not a valid URL');
         return;
     }
