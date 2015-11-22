@@ -1,7 +1,9 @@
 var utils = require('../libs/utils');
 
 var detector = {};
-detector.name = 'DenyAll DAWAF';
+detector.name = 'DenyAll/DAWAF';
+
+// feel free to ad credits, note and changes !
 detector.info = [
     'http://www.denyall.com/',
     'DAWAF is the new name of Bee Ware i-Suite since 2014',
