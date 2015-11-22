@@ -19,9 +19,7 @@ suite(path.basename(__filename), function() {
 
     urls.forEach(function(myUrl) {
         text = 'should be valid';
-        if (!this.isURL) {
-            text = 'should be invalid';
-        }
+        if (!myUrl.isURL) text = 'should be invalid';
         test(myUrl.url+' '+text,function() {
             expect(utils.isURL(url.parse(this.url))).to.be.equal(this.isUrl);
         }.bind(myUrl));
