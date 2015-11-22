@@ -64,7 +64,7 @@ suite(path.basename(__filename), function() {
         });
     });
 
-    test('local webserver must be up and running', function (done) {
+    test('wafs simulator must be up and running', function (done) {
         request(myUrl,function(err,response,body) {
             expect(response.statusCode).to.be.equal(200);
             expect(response.headers.server).to.be.equal(headerServer);
@@ -73,7 +73,7 @@ suite(path.basename(__filename), function() {
         });
     });
 
-    test('DenyAll DAWAF (was Bee Ware i-Suite) should have a score > 50', function (done) {
+    test('waf DenyAll DAWAF (was Bee Ware i-Suite) should have a score > 50', function (done) {
 
         new evilwaf({
             url:myUrl+'/dawaf'
@@ -93,7 +93,7 @@ suite(path.basename(__filename), function() {
     });
 
 
-    test('local webserver must be stopped',function(done) {
+    test('wafs simulator must be stopped',function(done) {
         srv.close();
         done();
     });
