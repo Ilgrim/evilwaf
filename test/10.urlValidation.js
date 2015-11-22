@@ -10,6 +10,7 @@ suite(path.basename(__filename), function() {
         {url:'https://www.test.com',isUrl:true},
         {url:'http://www.test.com:8080',isUrl:true},
         {url:'https://www.test.com:8080',isUrl:true},
+        {url:'http://127.0.0.1:1026/dawaf',isUrl:true},
         {url:'foo',isUrl:false},
         {url:'http://',isUrl:false}
     ];

@@ -29,7 +29,8 @@
   "dependencies": {
     "async": "1.5.0",
     "commander": "2.9.0",
-    "findup-sync": "0.3.0"
+    "findup-sync": "0.3.0",
+    "request": "2.67.0"
   },
   "devDependencies": {
     "chai": "3.4.1",

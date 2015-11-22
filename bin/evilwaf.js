@@ -5,20 +5,15 @@ var output = require('../libs/formater');
 
 options.parse(process.argv,function(err,options) {
 
-    var scan = new evilwaf(options);
-
-    scan.on('result', function (data) {
-        if (!options.json) {
-            process.stderr.write('\r\033[0K');
+    new evilwaf(options,function(err,results) {
+        if (err) {
+            return output({error:err},options);
         }
-        output(data, options);
-    });
 
-    scan.on('error', function (err) {
-        output({error:err},options);
+        results.waf.forEach(function(waf) {
+            console.log(results.url+'|',waf.name,waf.ratio+'%');
+        })
     });
-
-    scan.run();
 
 });
 

@@ -13,14 +13,15 @@ var parse = function(args,cb) {
         .option('-t, --timeout <timeout>','TCP and HTTP timeout, default 2000',2000)
         .option('-a, --about','display evilwaf infos')
         .option('-j, --json','json output format')
+        //.option('-ua, --user-agent','custom User-Agent header') @todo
+        .option('-s, --silent','remove default User-Agent header "evilwaf"')
+        .option('-v, --verbose','display more infos')
         .action(function(myUrl) {
-            var urlParsed = url.parse(myUrl);
-            urlParsed.protocol = urlParsed.protocol || '';
-
             cb(null,{
                 url:myUrl,
-                urlParsed:urlParsed,
-                timeout:program.timeout
+                timeout:program.timeout,
+                silent:program.silent,
+                verbose:program.verbose
             });
         })
         .parse(args);
