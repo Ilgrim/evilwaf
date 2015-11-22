@@ -15,9 +15,14 @@ suite(path.basename(__filename), function() {
         {url:'http://',isUrl:false}
     ];
 
+    var text = '';
 
     urls.forEach(function(myUrl) {
-        test(myUrl.url+' should be valid',function() {
+        text = 'should be valid';
+        if (!this.isURL) {
+            text = 'should be invalid';
+        }
+        test(myUrl.url+' '+text,function() {
             expect(utils.isURL(url.parse(this.url))).to.be.equal(this.isUrl);
         }.bind(myUrl));
     });
