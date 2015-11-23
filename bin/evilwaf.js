@@ -5,13 +5,13 @@ var output = require('../libs/formater');
 
 options.parse(process.argv,function(err,options) {
 
-    new evilwaf(options,function(err,results) {
+    new evilwaf(options,function(err,data) {
         if (err) {
             return output({error:err},options);
         }
 
-        results.waf.forEach(function(waf) {
-            console.log(results.url+'|',waf.name,waf.ratio+'%');
+        Object.keys(data.scores).forEach(function(name) {
+            console.log(data.result.url+'|',name,data.scores[name].ratio);
         })
     });
 

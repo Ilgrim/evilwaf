@@ -106,6 +106,7 @@ evilwaf.prototype.scan = function(cb) {
     var self = this;
     this.emit('start',this.options);
     async.series([
+
         function lookup(callback) {
             //console.log('lookup',self.options.urlParsed.hostname);
             dns.lookup(self.options.urlParsed.hostname,function(err,res) {
@@ -116,6 +117,7 @@ evilwaf.prototype.scan = function(cb) {
                 callback();
             })
         },
+
         function requestNormal(callback) {
             //console.log('requestNormal',self.options.url);
             var r = request.get(self.options.url,self.requestOptions,function(err,response,body) {
@@ -134,6 +136,7 @@ evilwaf.prototype.scan = function(cb) {
             self.setupTimeout(self,r,cb);
 
         },
+
         function requestWithoutHostHeader(callback) {
 
             var r = request.get(self.options.url,self.requestOptions,function(err,response,body) {
@@ -145,6 +148,7 @@ evilwaf.prototype.scan = function(cb) {
             r.removeHeader('host');
             self.setupTimeout(self,r,cb);
         },
+
         function requestBadHost(callback) {
 
             var r = request.get(self.options.url,self.requestOptions,function(err,response,body) {
@@ -156,6 +160,7 @@ evilwaf.prototype.scan = function(cb) {
             r.setHeader('host','evilfqdn');
             self.setupTimeout(self,r,cb);
         },
+
         function requestCommandInjection(callback) {
             var urlTmp = JSON.parse(JSON.stringify(self.options.urlParsed));
             if (!urlTmp.search) {
@@ -163,7 +168,8 @@ evilwaf.prototype.scan = function(cb) {
             } else {
                 urlTmp.search+= '&evilcommand=cmd.exe';
             }
-            urlTmp = url.format(urlTmp);
+            urlTmp = url.format(urlTmp)
+
             var r = request.get(urlTmp,self.requestOptions,function(err,response,body) {
                 if (err) return cb(err);
                 self.result.response.commandInjection = self.formatResponse(response,body);
@@ -171,15 +177,21 @@ evilwaf.prototype.scan = function(cb) {
             });
             self.setupTimeout(self,r,cb);
         },
+
         function analyseResult(callback) {
-            self.result.waf = [];
-            self.detectors.forEach(function(detector) {
-                detector.analyze(self.result,function(data) {
-                    self.result.waf.push(data);
-                });
-            });
-            //console.log(JSON.stringify(self.result,null,4));
-            cb(null,self.result);
+            self.scores = {};
+
+            async.mapSeries(self.detectors,function (detector,next) {
+                detector.analyze(self,next);
+            },callback);
+
+        },
+
+        function displayResult(callback) {
+            if (self.options.verbose) {
+                console.log(JSON.stringify(self.result,null,4));
+            }
+            cb(null,self);
         }
     ]);
 };

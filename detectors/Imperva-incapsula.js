@@ -1,6 +1,7 @@
 var utils = require('../libs/utils');
 
-var detector = {};
+var detector = {}
+
 detector.name = 'Imperva/Incapsula';
 
 // feel free to ad credits, note and changes !
@@ -8,50 +9,62 @@ detector.info = [
     'http://www.imperva.com/'
 ];
 
-detector.score = 0;
-detector.scoreMax = 18;
+
 
 detector.analyze = function(data,cb) {
 
-    data.response.normal.score = 0;
-    data.response.noHost.score = 0;
+    var scoreMax = 18;
 
-    if (utils.setCookieNameMatch(/visid_incap/,data.response.normal.headers)) {
-        data.response.normal.score+= 3;
-        detector.score+=3;
+    var scores = data.scores[this.name] = {
+        noHost:0,
+        badHost:0,
+        commandInjection:0,
+        normal:0,
+        total:0
+    };
+
+    var response = data.result.response;
+
+    if (utils.setCookieNameMatch(/visid_incap/,response.normal.headers)) {
+        scores.normal+=3;
+        scores.total+=3;
     }
 
-    if (utils.setCookieNameMatch(/incap_ses/,data.response.normal.headers)) {
-        data.response.normal.score+= 3;
-        detector.score+=3;
+    if (utils.setCookieNameMatch(/incap_ses/,response.normal.headers)) {
+        scores.normal+=3;
+        scores.total+=3;
     }
 
-    if (data.response.normal.headers['x-cdn'] == "Incapsula") {
-        data.response.normal.score+= 3;
-        detector.score+=3;
+    if (response.normal.headers['x-cdn'] == "Incapsula") {
+        scores.normal+=3;
+        scores.total+=3;
     }
 
-    if (data.response.noHost.status.code == 503 && data.response.noHost.status.message == 'Service Unavailable') {
-        data.response.noHost.score+= 3;
-        detector.score+=3;
+    if (response.noHost.status.code == 503 && response.noHost.status.message == 'Service Unavailable') {
+        scores.noHost+=3;
+        scores.total+=3;
     }
 
-    if (data.response.badHost.status.code == 503 && data.response.badHost.status.message == 'Service Unavailable') {
-        data.response.badHost.score+= 3;
-        detector.score+=3;
+    if (response.badHost.status.code == 503 && response.badHost.status.message == 'Service Unavailable') {
+        scores.badHost+=3;
+        scores.total+=3;
     }
 
-    if (data.response.commandInjection.body.match(/Incapsula/ig)) {
-        data.response.commandInjection.score+= 3;
-        detector.score+=3;
+    if (response.commandInjection.body.match(/Incapsula/ig)) {
+        scores.commandInjection+=3;
+        scores.total+=3;
     }
 
-    cb({
-        name:detector.name,
-        score:detector.score,
-        scoreMax:detector.scoreMax,
-        ratio:Math.round((detector.score*100)/detector.scoreMax)
+    scores.ratio = Math.round((scores.total*100)/scoreMax)+'%';
+
+    cb();
+    /*{
+        name:this.name,
+        score:this.score,
+        scoreMax:this.scoreMax,
+        ratio:Math.round((this.score*100)/this.scoreMax)
     });
+    */
 };
 
 module.exports = detector;
