@@ -120,7 +120,7 @@ suite(path.basename(__filename), function() {
         });
     });
 
-    test('waf simulator Imperva/Incaptula should have a score > 50, others less', function (done) {
+    test('waf simulator Imperva/Incapsula should have a score > 50, others less', function (done) {
 
         new evilwaf({
             url:myUrl+'/imperva'
