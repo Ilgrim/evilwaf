@@ -1,6 +1,6 @@
 var utils = require('../libs/utils');
 
-var detector = {}
+var detector = {};
 
 detector.name = 'Imperva/Incapsula';
 
@@ -9,13 +9,11 @@ detector.info = [
     'http://www.imperva.com/'
 ];
 
-
-
 detector.analyze = function(data,cb) {
 
     var scoreMax = 18;
 
-    var scores = data.scores[this.name] = {
+    var scores = data.scores[detector.name] = {
         noHost:0,
         badHost:0,
         commandInjection:0,
