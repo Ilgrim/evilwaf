@@ -23,9 +23,6 @@ detector.analyze = function(data,cb) {
         total:0
     };
 
-    console.log(data);
-
-
     var response = data.result.response;
 
     if (utils.isApacheError(400,response.noHost)) {

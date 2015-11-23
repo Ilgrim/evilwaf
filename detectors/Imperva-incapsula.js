@@ -21,8 +21,6 @@ detector.analyze = function(data,cb) {
         total:0
     };
 
-    console.log(data);
-
     var response = data.result.response;
 
     if (utils.setCookieNameMatch(/visid_incap/,response.normal.headers)) {
