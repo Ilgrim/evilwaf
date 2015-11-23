@@ -21,6 +21,8 @@ detector.analyze = function(data,cb) {
         total:0
     };
 
+    console.log(data);
+
     var response = data.result.response;
 
     if (utils.setCookieNameMatch(/visid_incap/,response.normal.headers)) {
@@ -56,13 +58,6 @@ detector.analyze = function(data,cb) {
     scores.ratio = Math.round((scores.total*100)/scoreMax)+'%';
 
     cb();
-    /*{
-        name:this.name,
-        score:this.score,
-        scoreMax:this.scoreMax,
-        ratio:Math.round((this.score*100)/this.scoreMax)
-    });
-    */
 };
 
 module.exports = detector;
