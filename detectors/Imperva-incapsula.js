@@ -1,61 +1,36 @@
 var utils = require('../libs/utils');
+var Detector = require('../libs/detector');
+var detector = new Detector();
 
-var detector = {};
+detector.setName('Imperva/Incapsula');
 
-detector.name = 'Imperva/Incapsula';
-
-// feel free to ad credits, note and changes !
-detector.info = [
+detector.setInfo([
     'http://www.imperva.com/'
-];
+]);
 
 detector.analyze = function(data,cb) {
 
-    var scoreMax = 18;
-
-    var scores = data.scores[detector.name] = {
-        noHost:0,
-        badHost:0,
-        commandInjection:0,
-        normal:0,
-        total:0
-    };
-
     var response = data.result.response;
 
-    if (utils.setCookieNameMatch(/visid_incap/,response.normal.headers)) {
-        scores.normal+=3;
-        scores.total+=3;
-    }
+    // based on http://www.imperva.com behavior, 2015/11
 
-    if (utils.setCookieNameMatch(/incap_ses/,response.normal.headers)) {
-        scores.normal+=3;
-        scores.total+=3;
-    }
+    this.incrementScore(utils.setCookieNameMatch(/visid_incap/,response.normal.headers),3,'cookieVisitorIdFound');
 
-    if (response.normal.headers['x-cdn'] == "Incapsula") {
-        scores.normal+=3;
-        scores.total+=3;
-    }
+    this.incrementScore(utils.setCookieNameMatch(/incap_ses/,response.normal.headers),3,'cookieSessionFound');
 
-    if (response.noHost.status.code == 503 && response.noHost.status.message == 'Service Unavailable') {
-        scores.noHost+=3;
-        scores.total+=3;
-    }
+    this.incrementScore(response.normal.headers['x-cdn'] == "Incapsula",3,'xCdnHeaderFound');
 
-    if (response.badHost.status.code == 503 && response.badHost.status.message == 'Service Unavailable') {
-        scores.badHost+=3;
-        scores.total+=3;
-    }
+    var test = response.noHost.status.code == 503 && response.noHost.status.message == 'Service Unavailable';
+    this.incrementScore(test,3,'noHost503');
+
+    var test = response.badHost.status.code == 503 && response.badHost.status.message == 'Service Unavailable';
+    this.incrementScore(test,3,'badHost503');
 
     if (response.commandInjection.body.match(/Incapsula/ig)) {
-        scores.commandInjection+=3;
-        scores.total+=3;
+        this.incrementScore(test,3,'incapsulaFoundInAttackResponse');
     }
 
-    scores.ratio = Math.round((scores.total*100)/scoreMax)+'%';
-
-    cb();
+    cb(null,this.getScore());
 };
 
 module.exports = detector;

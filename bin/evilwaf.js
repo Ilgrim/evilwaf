@@ -10,13 +10,8 @@ options.parse(process.argv,function(err,options) {
             return output({error:err},options);
         }
 
-        Object.keys(data.scores).forEach(function(name) {
-            console.log(data.result.url+'|',name,data.scores[name].ratio);
-        })
+        console.log(JSON.stringify(data,null,4));
     });
 
 });
-
-
-
 

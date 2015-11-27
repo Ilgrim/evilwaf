@@ -1,0 +1,213 @@
+[
+  {
+    "name":"InfoGuard Airlock",
+    "enable":true,
+    "credits":"W3AF",
+    "request": [
+      {
+        "type": "standard",
+        "response": {
+          "headers":[
+            {
+              "name":"Set-Cookie",
+              "valueMatch": "AL[_-]?(SESS|LB)=",
+              "comments":[
+                "Credits goes to W3AF"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"Anquanbao",
+    "enable":true,
+    "request":[
+      {
+        "type":"standard",
+        "response":{
+          "headers":[
+            {
+              "name":"X-Powered-By-Anquanbao"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"Barracuda Application Firewall",
+    "enable":true,
+    "request":[
+      {
+        "type":"standard",
+        "response":{
+          "headers":[
+            {
+              "name":"Set-Cookie",
+              "valueMatch": "barra_counter_session=.+",
+              "comments":[
+                "Credits goes to W3AF"
+              ]
+            },
+            {
+              "name":"Set-Cookie",
+              "valueMatch":"BNI__BARRACUDA_LB_COOKIE=.+",
+              "comments":[
+                "Credits goes to Charlie Campbell"
+              ]
+            },
+            {
+              "name":"Set-Cookie",
+              "valueMatch":"BNI_persistence=.+",
+              "comments":[
+                "Credit goes to yours truly"
+              ]
+            },
+            {
+              "name":"Set-Cookie",
+              "valueMatch":"BN[IE]S_.*?=.+"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"BinarySec",
+    "enable":true,
+    "request":[
+      {
+        "type":"standard",
+        "response":{
+          "headers":[
+            {
+              "name":"server",
+              "value":"BinarySec"
+            },
+            {
+              "name":"x-binarysec-via"
+            },
+            {
+              "name":"x-binarysec-nocache"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"ChinaCache-CDN",
+    "enable":true,
+    "request":[
+      {
+        "type":"standard",
+        "response":{
+          "headers":[
+            {
+              "name":"Powered-By-ChinaCache"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"Cisco ACE XML Gateway",
+    "enable":true,
+    "request":[
+      {
+        "type":"standard",
+        "response":{
+          "headers":[
+            {
+              "name":"server",
+              "value":"ACE XML Gateway"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"DenyAll rWeb",
+    "enable":true,
+    "request":[
+      {
+        "type":"standard",
+        "response":{
+          "headers":[
+            {
+              "name":"set-cookie",
+              "valueMatch":"sessioncookie",
+              "comments":[
+                "Credits goes to W3AF"
+              ]
+            },
+            {
+              "name":"set-cookie",
+              "valueMatch":"__cfduid"
+            }
+          ]
+        }
+      },
+      {
+        "type":"attack",
+        "response":{
+          "status":[
+            {
+              "code": 200,
+              "reason": "Condition Intercepted",
+              "comments":[
+                "Tested against a Rweb 3.8",
+                "Credit goes to Sebastien Gioria",
+                "modified by sandro gauci and someone else"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"Applicure dotDefender",
+    "enable":true,
+    "request":[
+      {
+        "type":"attack",
+        "response":{
+          "headers":[
+            {
+              "name": "X-dotDefender-denied",
+              "valueMatch":"^1$",
+              "comments":[
+                  "thanks to j0e"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name":"F5 BIG-IP APM",
+    "enable":true,
+    "request":[
+      {
+        "type":"standard",
+        "response":{
+          "headers":[
+            {
+              "name": "set-cookie",
+              "valueMatchAll": [
+                "LastMRH_Session",
+                "MRHSession"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,72 +1,37 @@
 var utils = require('../libs/utils');
+var Detector = require('../libs/detector');
+var detector = new Detector();
 
-var detector = {};
+detector.setName('DenyAll/DAWAF');
 
-detector.name = 'DenyAll/DAWAF';
-
-// feel free to ad credits, note and changes !
-detector.info = [
+detector.setInfo([
     'http://www.denyall.com/',
     'DAWAF is the new name of Bee Ware i-Suite since 2014',
     'Reverse Proxy is based on apache 2'
-];
+]);
 
 detector.analyze = function(data,cb) {
 
-    var scoreMax = 15;
-
-    var scores = data.scores[detector.name] = {
-        noHost:0,
-        badHost:0,
-        commandInjection:0,
-        normal:0,
-        total:0
-    };
-
     var response = data.result.response;
 
-    if (utils.isApacheError(400,response.noHost)) {
-        // by default, apache send a 400 error when no host header
-        scores.noHost+=3;
-        scores.total+=3;
-    }
+    // by default, apache send a 400 error when no host header
+    this.incrementScore(utils.isApacheError(400,response.noHost),3,'noHost400');
 
-    if (utils.isApacheError(403,response.commandInjection)) {
-        // by default, DAWAF send a 403 when attack detected
-        scores.commandInjection+= 5;
-        scores.total+=5;
-    }
+    // by default, DAWAF send a 403 when attack detected
+    this.incrementScore(utils.isApacheError(403,response.commandInjection),5,'attack403');
 
-    if (utils.isApacheError(403,response.badHost)) {
-        // by default, DAWAF send a 403 when header host value does not match DAWAF setup
-        scores.badHost+=2;
-        scores.total+=2;
-    }
+    // by default, DAWAF send a 403 when header host value does not match DAWAF setup
+    this.incrementScore(utils.isApacheError(403,response.badHost),2,'badHost403');
 
-    if (utils.isApacheError(400,response.badHost)) {
-        // @todo new default behavior ? have to double check
-        scores.badHost+=1;
-        scores.total+=1;
-    }
+    // cookies are used when waf configuration contains websso or advanced security features
+    // administrator often forget to change waf cookie name
+    this.incrementScore(utils.setCookieNameMatch(/BWFSESSID/,response.normal.headers),10,'cookieFound');
 
-    if (utils.setCookieNameMatch(/BWFSESSID/,response.normal.headers)) {
-        // No cookie by default, but only if dawaf setup use advanced features
-        scores.normal+=3;
-        scores.total+=3;
-    }
+    // Common setup: redirect when attack detected
+    var test = !utils.hasHeader('location',response.normal.headers) && utils.hasHeader('location',response.commandInjection.headers);
+    this.incrementScore(test,3,'attack301or302');
 
-    if (
-        !utils.hasHeader('location',response.normal.headers) &&
-        utils.hasHeader('location',response.commandInjection.headers)
-    ) {
-        // Common setup: redirect when attack detected
-        scores.commandInjection+=1;
-        scores.total+=1;
-    }
-
-    scores.ratio = Math.round((scores.total*100)/scoreMax)+'%';
-
-    cb();
+    cb(null,this.getScore());
 };
 
 module.exports = detector;
