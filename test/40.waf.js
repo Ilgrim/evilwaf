@@ -87,19 +87,19 @@ suite(path.basename(__filename), function() {
         this();
     };
 
-    test('detector must return no waf', function (done) {
+    test('detector must NOT detect any waf', function (done) {
         new evilwaf({url:myUrl+'/'},shouldReturnNoWaf.bind(done));
     });
 
-    test('detector must return waf (normal page having little content)', function (done) {
+    test('detector must detect a waf (normal page having little content)', function (done) {
         new evilwaf({url:myUrl+'/little'},shouldReturnWaf.bind(done));
     });
 
-    test('detector must return waf (normal page having medium content)', function (done) {
+    test('detector must detect a waf (normal page having medium content)', function (done) {
         new evilwaf({url:myUrl+'/medium'},shouldReturnWaf.bind(done));
     });
 
-    test('detector must return waf (normal page having big content)', function (done) {
+    test('detector must detect a waf (normal page having big content)', function (done) {
         new evilwaf({url:myUrl+'/big'},shouldReturnWaf.bind(done));
     });
 
