@@ -79,6 +79,7 @@ suite(path.basename(__filename), function() {
     };
 
     var shouldReturnWaf = function(err,data) {
+
         if (err) throw err;
         expect(data).to.be.a('object');
         expect(data.scores).to.be.a('object');

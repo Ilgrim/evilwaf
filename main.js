@@ -9,15 +9,22 @@ var request = require('request');
 var randomstring = require('randomstring');
 var https = require('https');
 var http = require('http');
+var decache = require('decache');
 
 // Allow self signed certificates for requests and proxied requests
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+var _defaultTimeout = 5000;
+
+var detectorsDir = __dirname+'/detectors';
+var detectorsList = fs.readdirSync(detectorsDir);
 
 var evilwaf = function(opts,cb) {
 
     if (false === (this instanceof evilwaf)) {
         return new evilwaf(opts,cb);
     }
+
     var self = this;
     this.options = opts;
     this.callback = cb;
@@ -35,16 +42,8 @@ var evilwaf = function(opts,cb) {
             'Connection':'close'
         }
     };
-    this.detectors = [];
-
-    var detectorsDir = __dirname+'/detectors';
-    var detectors = fs.readdirSync(detectorsDir);
-    detectors.forEach(function(detector) {
-        self.detectors.push(require(detectorsDir+'/'+detector));
-    });
-
     events.call(self);
-    setTimeout(this.run.bind(this),1);
+    this.run();
 };
 
 util.inherits(evilwaf, events);
@@ -65,11 +64,10 @@ evilwaf.prototype.checkOptions = function() {
     }
 
     if (err) {
-        this.callback && this.callback(err);
         return this.emit('error',err);
     }
 
-    if (!this.options.timeout) this.options.timeout = 2000;
+    if (!this.options.timeout) this.options.timeout = _defaultTimeout;
 
     if (this.options.silent) {
         delete this.requestOptions.headers['User-Agent'];
@@ -81,8 +79,8 @@ evilwaf.prototype.checkOptions = function() {
     }
 
     if (!utils.isURL(this.options.urlParsed)) {
-        this.emit('error','passed arguments is not a valid URL');
-        return;
+        err = 'passed arguments is not a valid URL';
+        return this.emit('error',err);
     }
 
     this.result.url = this.options.url;
@@ -126,10 +124,11 @@ evilwaf.prototype.formatResponse = function(response,body) {
     }
 };
 
-evilwaf.prototype.setupTimeout = function(self,req,cb) {
+evilwaf.prototype.setupTimeout = function(self,req) {
     req.on('socket',function(socket) {
         socket.on('timeout',function() {
-            cb('timeout '+self.options.timeout+' ms');
+            self.emit('error','timeout '+self.options.timeout+' ms');
+            req.close();
         });
         socket.on('connect',function() {
             socket.setTimeout(self.options.timeout);
@@ -138,13 +137,13 @@ evilwaf.prototype.setupTimeout = function(self,req,cb) {
     });
 };
 
-evilwaf.prototype.scan = function(cb) {
+evilwaf.prototype.scan = function() {
     var self = this;
     this.emit('start',this.options);
 
-    var getOptions = function() {
+    var getRequestOptions = function() {
 
-        // We NEED a new Agent() for each request to avoid some cache effect side
+        // We NEED a new Agent for each request to avoid some cache effect side
 
         var opts = JSON.parse(JSON.stringify(self.requestOptions));
         if (self.options.urlParsed.protocol.match(/https/)) {
@@ -162,7 +161,7 @@ evilwaf.prototype.scan = function(cb) {
             //console.log('lookup',self.options.urlParsed.hostname);
             dns.lookup(self.options.urlParsed.hostname,function(err,res) {
                 //console.log('lookup callback');
-                if (err) return cb(err);
+                if (err) return self.emit('error',err);
                 self.result.ip = res;
                 self.result.response = {};
                 callback();
@@ -171,19 +170,21 @@ evilwaf.prototype.scan = function(cb) {
 
 
         function requestNormal(callback) {
-            var opts = getOptions();
+            var opts = getRequestOptions();
             var r = request.get(self.options.url,opts,function(err,response,body) {
-                if (err) return cb(err);
+                if (err) return self.emit('error',err);
                 //console.log('requestNormal',response.statusCode);
                 //console.log(JSON.stringify(r.req._headers,null,4));
                 self.result.response.normal = self.formatResponse(response,body);
                 callback();
             });
-            self.setupTimeout(self,r,cb);
+            self.setupTimeout(self,r);
         },
 
         function requestCommandInjection(callback) {
-            var opts = getOptions();
+            var opts = getRequestOptions();
+
+            if (self.options.testMode) opts.headers['x-attack'] = true;
 
             var urlTmp = JSON.parse(JSON.stringify(self.options.urlParsed));
             if (!urlTmp.search) {
@@ -194,78 +195,74 @@ evilwaf.prototype.scan = function(cb) {
             urlTmp = url.format(urlTmp);
 
             var r = request.get(urlTmp,opts,function(err,response,body) {
-                if (err) return cb(err);
+                if (err) return self.emit('error',err);
                 //console.log('requestCommandInjection',response.statusCode);
                 //console.log(JSON.stringify(r.req._headers,null,4));
                 self.result.response.commandInjection = self.formatResponse(response,body);
                 callback();
             });
-            self.setupTimeout(self,r,cb);
+            self.setupTimeout(self,r);
         },
 
         function requestNoHost(callback) {
-            var opts = getOptions();
+            var opts = getRequestOptions();
             var r = request.get(self.options.url,opts,function(err,response,body) {
-                if (err) return cb(err);
+                if (err) return self.emit('error',err);
                 //console.log('requestNoHost',response.statusCode);
                 //console.log(JSON.stringify(r.req._headers,null,4));
                 self.result.response.noHost = self.formatResponse(response,body);
                 callback();
             });
             r.removeHeader('host');
-            self.setupTimeout(self,r,cb);
+            self.setupTimeout(self,r);
         },
 
         function requestBadHost(callback) {
-            var opts = getOptions();
+            var opts = getRequestOptions();
             opts.headers.host = randomstring.generate();
 
             var r = request.get(self.options.url,opts,function(err,response,body) {
-                if (err) return cb(err);
+                if (err) return self.emit('error',err);
                 //console.log('requestBadHost',response.statusCode);
                 //console.log(JSON.stringify(r.req._headers,null,4));
                 self.result.response.badHost = self.formatResponse(response,body);
                 callback();
             });
-            self.setupTimeout(self,r,cb);
+            self.setupTimeout(self,r);
         },
 
         function analyseResult(callback) {
 
-            async.mapSeries(self.detectors,function (detector,next) {
+            var detectorPath;
+            var detector;
+            async.mapSeries(detectorsList,function(detector,next) {
+                detectorPath = detectorsDir+'/'+detector;
+                // the usage of "decache" is a proof that i'm an asshole coder :(
+                decache(detectorPath);
+                detector = require(detectorPath);
                 detector.analyze(self,function(err,score) {
-                    if (detector.getName) self.scores[detector.getName()] = score;
+                    self.scores[detector.getName()] = score;
                     next();
-                });
+                })
             },callback);
-
         },
 
         function displayResult() {
-            if (self.options.verbose) {
-                console.log(JSON.stringify(self,null,4));
-            }
-            cb(null,self);
+
+            self.callback(null,{
+                scores:self.scores
+            });
+            self.emit('done');
         }
     ]);
 };
 
 evilwaf.prototype.run = function() {
-    var self = this;
-    self.checkOptions();
-    self.scan(function(err,data) {
-        if (self.callback) {
-
-            if (err) return self.callback(err);
-
-            return self.callback(err,{
-                scores:self.scores
-            });
-        }
-        self.emit('done');
+    this.on('ready',this.scan);
+    this.on('error',function(err) {
+        this.callback && this.callback(err);
     });
-
+    this.checkOptions();
 };
-
 
 module.exports = evilwaf;

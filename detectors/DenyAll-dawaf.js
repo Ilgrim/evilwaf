@@ -1,5 +1,5 @@
 var utils = require('../libs/utils');
-var Detector = require('../libs/detector');
+var Detector = require('../libs/Detector');
 var detector = new Detector();
 
 detector.setName('DenyAll/DAWAF');

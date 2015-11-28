@@ -1,5 +1,5 @@
 var diff = require('fast-diff');
-var Detector = require('../libs/detector');
+var Detector = require('../libs/Detector');
 var detector = new Detector();
 
 // generic waf detection

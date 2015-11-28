@@ -19,6 +19,8 @@ suite(path.basename(__filename), function() {
         return http.createServer(function (req, res) {
             var html='';
 
+            //console.log('testMode',req.headers['x-attack'],'host',req.headers['host'],'url',req.url);
+
             if (req.url === '/') {
                 res.setHeader('server', headerServer);
                 return res.end('ok');
@@ -39,14 +41,14 @@ suite(path.basename(__filename), function() {
                     return res.end(html);
                 }
 
-                if (req.url.match(/evil/)) {
+                if (req.headers['x-attack']) {
                     //console.log(req.url,'attack detected','sending 403');
                     html = apacheForbidden.replace(/URL/g,req.url);
                     res.writeHead(403, {'Content-Type': 'text/html'});
                     return res.end(html);
                 }
 
-                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.writeHead(200, {'Content-Type': 'text/html'})
                 return res.end('ok');
             }
 
@@ -65,7 +67,7 @@ suite(path.basename(__filename), function() {
                 res.setHeader('Set-Cookie','visid_incap_2439=K5h9ChE7SiCgnwOr7fp/RB6iUVYAAAAAQUIPAAAAAABvLZ8C5D/Fvmim+DKzYi1F; expires=Tue, 21 Nov 2017 09:11:32 GMT; path=/; Domain=.imperva.com');
                 res.setHeader('Set-Cookie','incap_ses_287_2439=e1mBQ+0t4xy9XPTbXqH7Ax6iUVYAAAAANj5A4tyWSOyWt1ugTf/rXg==; path=/; Domain=.imperva.com');
 
-                if (req.url.match(/evil/)) {
+                if (req.headers['x-attack']) {
                     res.writeHead(403, 'Forbidden');
                     return res.end("<html style=\"height:100%\"><head><META NAME=\"ROBOTS\" CONTENT=\"NOINDEX, NOFOLLOW\"><meta name=\"format-detection\" content=\"telephone=no\"><meta name=\"viewport\" content=\"initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\"></head><body style=\"margin:0px;height:100%\"><iframe src=\"/_Incapsula_Resource?CWUDNSAI=1&xinfo=8-16409570-0 0NNN RT(1448190496382 0) q(0 -1 -1 -1) r(0 -1) B15(3,1001,1)&incident_id=287000430057275853-154529650563809976&edet=15&cinfo=03000000\" frameborder=0 width=\"100%\" height=\"100%\" marginheight=\"0px\" marginwidth=\"0px\">Request unsuccessful. Incapsula incident ID: 287000430057275853-154529650563809976</iframe></body></html>");
                 }
@@ -97,61 +99,49 @@ suite(path.basename(__filename), function() {
         });
     });
 
+    var testScore = function(err,data,re,done) {
+
+        expect(err).to.be.null;
+        expect(data).to.be.a('object');
+        expect(data.scores).to.be.a('object');
+
+        var score;
+        var myScore;
+
+        Object.keys(data.scores).forEach(function(waf) {
+            myScore = parseInt(data.scores[waf].score);
+            if (waf.match(re)) {
+                expect(myScore).to.be.above(0);
+                score = myScore;
+            } else if (waf == 'WAF') {
+                expect(myScore).to.be.equal(100);
+            }
+        });
+
+        Object.keys(data.scores).forEach(function(waf) {
+            if (!waf.match(re) && waf !='WAF') {
+                expect(parseInt(data.scores[waf].score)).to.be.below(score);
+            }
+        });
+
+        done();
+    };
+
     test('waf simulator DenyAll/DAWAF (was Bee Ware/i-Suite) : should have a score > 0, other less', function (done) {
-
         new evilwaf({
-            url:myUrl+'/denyall/dawaf'
+            url:myUrl+'/denyall/dawaf',
+            testMode:true
         },function(err,data) {
-            if (err) throw err;
-
-            expect(data).to.be.a('object');
-            expect(data.scores).to.be.a('object');
-
-            var score;
-
-            Object.keys(data.scores).forEach(function(waf) {
-                if (waf.match(/dawaf/i)) {
-                    score = parseInt(data.scores[waf].score);
-                    expect(score).to.be.above(0);
-                }
-            });
-
-            Object.keys(data.scores).forEach(function(waf) {
-                if (!waf.match(/dawaf/i)) {
-                    expect(parseInt(data.scores[waf].score)).to.be.below(score);
-                }
-            });
-
-            done();
+            testScore(err,data,/dawaf/i,done);
         });
     });
 
     test('waf simulator Imperva/Incapsula : should have a score > 0, other less', function (done) {
-
         new evilwaf({
-            url:myUrl+'/imperva/incapsula'
+            url:myUrl+'/imperva/incapsula',
+            testMode:true
         },function(err,data) {
-            if (err) throw err;
-
-            expect(data).to.be.a('object');
-            expect(data.scores).to.be.a('object');
-
-            var score;
-
-            Object.keys(data.scores).forEach(function(waf) {
-                if (waf.match(/incapsula/i)) {
-                    score = parseInt(data.scores[waf].score);
-                    expect(parseInt(data.scores[waf].score)).to.be.above(0);
-                }
-            });
-
-            Object.keys(data.scores).forEach(function(waf) {
-                if (!waf.match(/incapsula/i)) {
-                    expect(parseInt(data.scores[waf].score)).to.be.below(score);
-                }
-            });
-
-            done();
+            testScore(err,data,/imperva/i,done);
         });
     });
 
