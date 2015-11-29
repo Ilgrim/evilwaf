@@ -13,12 +13,13 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 ### Requirement
 
 
-|                  | ASCII                        | HTML              |
+| Product          | cmd.exe                        | <script              | <script> | OR B=B |
  ----------------- | ---------------------------- | ------------------
-| Single backticks | `'Isn't this fun?'`            | 'Isn't this fun?' |
+| F5 | Not blocked            | 'Isn't this fun?' |
 | Quotes           | `"Isn't this fun?"`            | "Isn't this fun?" |
 | Dashes           | `-- is en-dash, --- is em-dash` | -- is en-dash, --- is em-dash |
 
+:fa-coffee:
 
 #### <i class="icon-folder-open"></i> Switch to another document
 
