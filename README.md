@@ -14,11 +14,10 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 
 | Product          | cmd.exe                      | &lt;script        | &lt;script&gt; | OR B=B |
- ----------------- | ---------------------------- | ------------------ --------- | ------ |
-| F5               | Not blocked                  | 'Isn't this fun?' |          |        |
-| Quotes           | `"Isn't this fun?"`          | "Isn't this fun?" |          |        |
+ ----------------- | ---------------------------- | ----------------- | -------------- | ------ |
+| F5               | Not blocked                  | 'Isn't this fun?' |      a         |   c    |
+| Quotes           | `"Isn't this fun?"`          | "Isn't this fun?" |      b         |   d    |
 
-:fa-coffee:
 
 #### <i class="icon-folder-open"></i> Switch to another document
 
