@@ -32,3 +32,4 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 :white_square_button: Pattern blocked
 
+----
