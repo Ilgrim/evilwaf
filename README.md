@@ -8,20 +8,22 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 ----
 
-[TOC]
-
 ### WAF Vendors support
 
 
-| Product          | cmd.exe  | &lt;script  | &lt;script&gt; | OR B=B |
- ----------------- | -------- | ----------- | -------------- | ------ |
-| Barracuda        | :white_medium_square:      | :white_medium_square:         | :white_square_button:            | :white_medium_square:    |
-| DenyAll DAWAF    | [x]      | [x]         | [x]            | [x]    |
-| F5 ASM           | [ ]      | [x]         | [x]            | [ ]    |
-| Nevis            | [x]      | [x]         | [x]            | [ ]    |
-| Radware Appwall  | [x]      | [ ]         | [x]            | [x]    |
+|                        | Product           | cmd.exe               | &lt;script            | &lt;script&gt;         | OR B=B                   |
+| ---------------------- | ----------------- | --------------------- | --------------------- | ---------------------- | ------------------------ |
+| :large_orange_diamond: | Barracuda         | :white_medium_square: | :white_medium_square: | :white_square_button:  | :white_medium_square:    |
+| :large_blue_diamond:   | DenyAll DAWAF     | :white_square_button: | :white_square_button: | :white_square_button:  | :white_square_button:    |
+| :large_orange_diamond: | F5 ASM            | :white_medium_square: | :white_square_button: | :white_square_button:  | :white_medium_square:    |
+| :large_orange_diamond: | Nevis             | :white_square_button: | :white_square_button: | :white_square_button:  | :white_medium_square:    |
+| :large_orange_diamond: | Radware Appwall   | :white_square_button: | :white_medium_square: | :white_square_button:  | :white_square_button:    |
 
+:large_blue_diamond: Evilwaf detector implemented
 
-:white_medium_square: Not blocked
-:white_square_button: Blocked
+:large_orange_diamond: Evilwaf detector not yet implemented
+
+:white_medium_square: Pattern NOT blocked
+
+:white_square_button: Pattern blocked
 
