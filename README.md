@@ -7,3 +7,25 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 [![NPM](https://nodei.co/npm-dl/evilwaf.png)](https://nodei.co/npm-dl/evilwaf/)
 
 ----
+
+[TOC]
+
+### Requirement
+
+
+|                  | ASCII                        | HTML              |
+ ----------------- | ---------------------------- | ------------------
+| Single backticks | `'Isn't this fun?'`            | 'Isn't this fun?' |
+| Quotes           | `"Isn't this fun?"`            | "Isn't this fun?" |
+| Dashes           | `-- is en-dash, --- is em-dash` | -- is en-dash, --- is em-dash |
+
+
+#### <i class="icon-folder-open"></i> Switch to another document
+
+
+
+```sequence
+Alice->Bob: Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!
+```
