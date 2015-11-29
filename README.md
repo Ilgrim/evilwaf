@@ -15,7 +15,7 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 | Product          | cmd.exe  | &lt;script  | &lt;script&gt; | OR B=B |
  ----------------- | -------- | ----------- | -------------- | ------ |
-| Barracuda        | [ ]      | [ ]         | [x]            | [ ]    |
+| Barracuda        | :white_medium_square:      | [ ]         | [x]            | [ ]    |
 | DenyAll DAWAF    | [x]      | [x]         | [x]            | [x]    |
 | F5 ASM           | [ ]      | [x]         | [x]            | [ ]    |
 | Nevis            | [x]      | [x]         | [x]            | [ ]    |
