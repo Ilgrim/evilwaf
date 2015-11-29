@@ -31,7 +31,7 @@ detector.analyze = function(data,cb) {
     var test = !utils.hasHeader('location',response.normal.headers) && utils.hasHeader('location',response.commandInjection.headers);
     this.incrementScore(test,3,'attack301or302');
 
-    cb(null,this.getScore());
+    cb(null,this.getScore(data));
 };
 
 module.exports = detector;

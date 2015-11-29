@@ -25,7 +25,7 @@ detector.analyze = function(data,cb) {
 
     this.incrementScore(diffs.length>3,1,'diffFoundOnAttack');
 
-    cb(null,this.getScore());
+    cb(null,this.getScore(data));
 
 };
 

@@ -6,6 +6,10 @@ var package = JSON.parse(fs.readFileSync(findup('package.json')));
 
 var parse = function(args,cb) {
 
+    var increase = function(v,value) {
+        return value+=1;
+    };
+
     program
         .version(package.version)
         .arguments('<url>')
@@ -15,8 +19,9 @@ var parse = function(args,cb) {
         .option('-j, --json','json output format')
         //.option('-ua, --user-agent','custom User-Agent header') @todo
         .option('-s, --silent','remove default User-Agent header "evilwaf"')
-        .option('-v, --verbose','display more infos')
+        .option('-v, --verbose','display more infos, use -v -vv -vvv',increase,0)
         .action(function(myUrl) {
+
             cb(null,{
                 url:myUrl,
                 timeout:program.timeout,
