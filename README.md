@@ -15,13 +15,13 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 | Product          | cmd.exe  | &lt;script  | &lt;script&gt; | OR B=B |
  ----------------- | -------- | ----------- | -------------- | ------ |
-| Barracuda        | :white_medium_square:      | [ ]         | [x]            | [ ]    |
+| Barracuda        | :white_medium_square:      | :white_medium_square:         | :white_square_button:            | :white_medium_square:    |
 | DenyAll DAWAF    | [x]      | [x]         | [x]            | [x]    |
 | F5 ASM           | [ ]      | [x]         | [x]            | [ ]    |
 | Nevis            | [x]      | [x]         | [x]            | [ ]    |
 | Radware Appwall  | [x]      | [ ]         | [x]            | [x]    |
 
 
-[ ] Not blocked
-[x] Blocked
+:white_medium_square: Not blocked
+:white_square_button: Blocked
 
