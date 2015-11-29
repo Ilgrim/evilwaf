@@ -10,21 +10,18 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 [TOC]
 
-### Requirement
+### WAF Vendors support
 
 
-| Product          | cmd.exe                      | &lt;script        | &lt;script&gt; | OR B=B |
- ----------------- | ---------------------------- | ----------------- | -------------- | ------ |
-| F5               | Not blocked                  | 'Isn't this fun?' |      a         |   c    |
-| Quotes           | `"Isn't this fun?"`          | "Isn't this fun?" |      b         |   d    |
+| Product          | cmd.exe  | &lt;script  | &lt;script&gt; | OR B=B |
+ ----------------- | -------- | ----------- | -------------- | ------ |
+| Barracuda        | [ ]      | [ ]         | [x]            | [ ]    |
+| DenyAll DAWAF    | [x]      | [x]         | [x]            | [x]    |
+| F5 ASM           | [ ]      | [x]         | [x]            | [ ]    |
+| Nevis            | [x]      | [x]         | [x]            | [ ]    |
+| Radware Appwall  | [x]      | [ ]         | [x]            | [x]    |
 
 
-#### <i class="icon-folder-open"></i> Switch to another document
+[ ] Not blocked
+[x] Blocked
 
-
-
-```sequence
-Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!
-```
