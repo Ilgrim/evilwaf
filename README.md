@@ -8,6 +8,10 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 ----
 
+### Work in progress, no release yet
+
+----
+
 ### WAF Vendors support
 
 
