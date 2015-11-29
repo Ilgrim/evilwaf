@@ -128,7 +128,7 @@ evilwaf.prototype.setupTimeout = function(self,req) {
     req.on('socket',function(socket) {
         socket.on('timeout',function() {
             self.emit('error','timeout '+self.options.timeout+' ms');
-            req.close();
+            req.end();
         });
         socket.on('connect',function() {
             socket.setTimeout(self.options.timeout);
