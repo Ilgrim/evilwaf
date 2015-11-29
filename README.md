@@ -19,6 +19,7 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 | :--------------------: | ----------------- | :-------------------: | :-------------------: | :--------------------: | :----------------------: |
 | :large_orange_diamond: | Barracuda         | :white_medium_square: | :white_medium_square: | :white_square_button:  | :white_medium_square:    |
 | :large_blue_diamond:   | DenyAll DAWAF     | :white_square_button: | :white_square_button: | :white_square_button:  | :white_square_button:    |
+| :large_blue_diamond:   | DenyAll rWeb      | :white_square_button: | :white_square_button: | :white_square_button:  | :white_square_button:    |
 | :large_orange_diamond: | F5 ASM            | :white_medium_square: | :white_square_button: | :white_square_button:  | :white_medium_square:    |
 | :large_blue_diamond:   | Imperva Incapsula | :white_square_button: | :white_square_button: | :white_square_button:  | :white_square_button:    |
 | :large_orange_diamond: | Nevis             | :white_square_button: | :white_square_button: | :white_square_button:  | :white_medium_square:    |
