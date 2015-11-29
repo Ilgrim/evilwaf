@@ -1,8 +1,8 @@
-# Evilwaf
+# Evilwaf [![Build Status](https://secure.travis-ci.org/eviltik/evilwaf.png)](http://travis-ci.org/eviltik/evilwaf)
 
 Evilwaf try to identify a WAF (Web Application Firewall) in front of a web application.
 
-[![Build Status](https://secure.travis-ci.org/eviltik/evilwaf.png)](http://travis-ci.org/eviltik/evilwaf)
+It use scoring on blocked/not blocked patterns, response header presence or not, cookies, html keyword and more ...
 
 <!--[![NPM](https://nodei.co/npm-dl/evilwaf.png)](https://nodei.co/npm-dl/evilwaf/)-->
 
@@ -12,7 +12,9 @@ Evilwaf try to identify a WAF (Web Application Firewall) in front of a web appli
 
 ----
 
-### WAF Vendors support
+### WAF Vendors support and blocked pattern status
+
+Blocked pattern status is relative to a default security policy.
 
 
 |                        | Product           | cmd.exe               | &lt;script            | &lt;script&gt;         | OR B=B                   |
