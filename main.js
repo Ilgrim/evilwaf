@@ -237,9 +237,12 @@ evilwaf.prototype.scan = function() {
             var detector;
             async.mapSeries(detectorsList,function(detector,next) {
                 detectorPath = detectorsDir+'/'+detector;
-                // the usage of "decache" is a proof that i'm an asshole coder :(
+
+                // the usage of "decache" is probably a proof that i'm an asshole coder :(
                 decache(detectorPath);
+
                 detector = require(detectorPath);
+                detector.setVerbose(self.options.verbose);
                 detector.analyze(self,function(err,score) {
                     self.scores[detector.getName()] = score;
                     next();
@@ -249,9 +252,17 @@ evilwaf.prototype.scan = function() {
 
         function displayResult() {
 
-            self.callback(null,{
-                scores:self.scores
-            });
+            if (self.options.verbose == 2) {
+                self.callback(null,{
+                    scores:self.scores,
+                    result:self.result
+                });
+            } else {
+                self.callback(null, {
+                    scores: self.scores
+                });
+            }
+
             self.emit('done');
         }
     ]);

@@ -1,55 +1,82 @@
-var Detector = function() {
-    this._name = '';
-    this._info = [];
-    this._score = 0;
-    this._nbTest = 0;
-    this._tests = {};
-    this._total = 0;
-};
+var detector = function() {
+    var self = this;
 
-Detector.prototype.incrementScore = function(match,weight,comment) {
-    if (match) {
-        this._total+=weight;
-    }
-    this._nbTest+=weight;
+    self.name = '';
+    self.info = [];
+    self.score = 0;
+    self.nbTest = 0;
+    self.tests = {};
+    self.total = 0;
 
-    if (comment) {
-        if (!this._tests[comment]) this._tests[comment] = 0;
+    var incrementScore = function(match,weight,comment) {
+
         if (match) {
-            this._tests[comment]=weight+'/'+weight;
-        } else {
-            this._tests[comment]='0/'+weight;
+            self.total+=weight;
         }
-    }
+        self.nbTest+=weight;
 
-    if (this._total>0) {
-        this._score = Math.round((this._total * 100) / this._nbTest);
-    }
+        if (comment) {
+            if (!self.tests[comment]) self.tests[comment] = 0;
+            if (match) {
+                self.tests[comment]=weight+'/'+weight;
+            } else {
+                self.tests[comment]='0/'+weight;
+            }
+        }
 
-    //console.log('incrementScore',this._name,this._total,this._nbTest);
-};
+        if (self.total>0) {
+            self.score = Math.round((self.total * 100) / self.nbTest);
+        }
 
-Detector.prototype.getScore = function() {
+        //console.log('incrementScore',self.name,self.total,self.nbTest,self.score);
+    };
+
+    var getScore = function(data) {
+        if (!self.verbosity) {
+            return {
+                score:self.score
+            }
+        }
+
+        if (self.verbosity) {
+            return {
+                tests: self.tests,
+                score: self.score
+            }
+        }
+    };
+
+    var setName = function(detectorName) {
+        self.name = detectorName;
+    };
+
+    var getName = function() {
+        return self.name;
+    };
+
+    var setInfo = function(detectorInfo) {
+        self.info = detectorInfo;
+    };
+
+    var getInfo = function() {
+        return self.info;
+    };
+
+    var setVerbose = function(verbosity) {
+        self.verbosity = verbosity
+    };
+
+    //reset();
+
     return {
-        tests:this._tests,
-        score:this._score
+        incrementScore:incrementScore,
+        getName:getName,
+        setName:setName,
+        setInfo:setInfo,
+        getInfo:getInfo,
+        getScore:getScore,
+        setVerbose:setVerbose
     }
 };
 
-Detector.prototype.setName = function(name) {
-    this._name = name;
-};
-
-Detector.prototype.getName = function() {
-    return this._name;
-};
-
-Detector.prototype.setInfo = function(info) {
-    this._info = info;
-};
-
-Detector.prototype.getInfo = function() {
-    return this._info;
-};
-
-module.exports = Detector;
+module.exports = detector;

@@ -30,7 +30,7 @@ detector.analyze = function(data,cb) {
         this.incrementScore(test,3,'incapsulaFoundInAttackResponse');
     }
 
-    cb(null,this.getScore());
+    cb(null,this.getScore(data));
 };
 
 module.exports = detector;
